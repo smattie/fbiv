@@ -1,0 +1,18 @@
+#!/bin/sh
+
+: ${CC:="gcc"}
+: ${STRIP:="strip"}
+: ${CFLAGS:="-pipe -O2 -fomit-frame-pointer -fno-stack-protector"}
+: ${CPPFLAGS:="-DNDEBUG"}
+: ${LDFLAGS:=""}
+
+BIN="fbiv"
+
+$CC -std=c99 -fsingle-precision-constant   \
+	-Wpointer-arith -Wno-unused-result \
+	$CPPFLAGS $CFLAGS main.c -o $BIN   \
+	$LDFLAGS -lm
+
+$STRIP -s -R .note.ABI-tag -R .note.gnu.property      \
+	-R .gnu.version -R .eh_frame_hdr -R .eh_frame \
+	-R .comment -R .symtab -R .strtab $BIN
